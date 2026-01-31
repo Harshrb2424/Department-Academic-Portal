@@ -166,6 +166,18 @@
                 </div>
                 <div>
                     <label
+                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Batch</label>
+                    <div class="relative">
+                        <select id="batchSelect"
+                            class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 rounded-lg text-sm p-2.5 pr-8 focus:ring-brand-500 focus:border-brand-500 transition-colors disabled:opacity-50"
+                            disabled>
+                            <option value="">Select Batch...</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-3 top-3 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+                <div>
+                    <label
                         class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Year
                         & Sem</label>
                     <div class="relative">
@@ -173,18 +185,6 @@
                             class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 rounded-lg text-sm p-2.5 pr-8 focus:ring-brand-500 focus:border-brand-500 transition-colors disabled:opacity-50"
                             disabled>
                             <option value="">Select Y/S...</option>
-                        </select>
-                        <i class="ph ph-caret-down absolute right-3 top-3 text-slate-400 pointer-events-none"></i>
-                    </div>
-                </div>
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Batch</label>
-                    <div class="relative">
-                        <select id="batchSelect"
-                            class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 rounded-lg text-sm p-2.5 pr-8 focus:ring-brand-500 focus:border-brand-500 transition-colors disabled:opacity-50"
-                            disabled>
-                            <option value="">Select Batch...</option>
                         </select>
                         <i class="ph ph-caret-down absolute right-3 top-3 text-slate-400 pointer-events-none"></i>
                     </div>
@@ -250,7 +250,7 @@
                 </div>
 
                 <div id="projectsContainer"
-                    class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden min-h-[150px] transition-colors">
+                    class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <div class="p-8 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center">
                         <i class="ph ph-chalkboard-teacher text-3xl mb-2"></i>
                         <p class="text-sm">Select filters to load class projects</p>
@@ -349,6 +349,10 @@
                     this.fetchCoreData();
                 } else {
                     this.updateUIValues();
+
+                    if (window.innerWidth < 640 && !this.state.mobileFiltersOpen) {
+                        this.toggleMobileFilters();
+                    }
                 }
             },
 
@@ -436,8 +440,11 @@
 
                 if (reg && batch && dept) {
                     document.getElementById('mobileFilterDot').classList.remove('hidden');
-                    // We allow fetching Core Data now
                     this.fetchCoreData();
+
+                    if (yearSem !== '' && this.state.mobileFiltersOpen) {
+                        this.toggleMobileFilters();
+                    }
                 } else {
                     document.getElementById('yearSemSelect').disabled = true;
                     document.getElementById('welcomeState').classList.remove('hidden');
@@ -451,7 +458,6 @@
                 const { reg, batch, dept } = this.state;
 
                 try {
-                    // UPDATED: Now we fetch curriculum.json dynamically based on the Regulation folder
                     const [subRes, noteRes, clsRes, currRes] = await Promise.all([
                         fetch(`./resources/${reg}/subjects.json`),
                         fetch(`./resources/${reg}/notes.json`),
@@ -677,20 +683,46 @@
                     const details = document.createElement('details');
                     details.className = "group border-b border-slate-100 dark:border-slate-800 last:border-0";
                     details.open = true;
-                    let itemsHtml = projs.map(p => `
+
+                    let itemsHtml = projs.map(p => {
+                        // Map all presentation links
+                        const presentations = p.presentation_links.map((link, idx) => `
+                            <a href="${link}" target="_blank" class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 font-medium">
+                                <i class="ph ph-presentation"></i> Presentation ${p.presentation_links.length > 1 ? idx + 1 : ''}
+                            </a>
+                        `).join('');
+
+                        // Map all document links
+                        const reports = p.documents.map((link, idx) => `
+                            <a href="${link}" target="_blank" class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
+                                <i class="ph ph-file-pdf"></i> Report ${p.documents.length > 1 ? idx + 1 : ''}
+                            </a>
+                        `).join('');
+
+                        return `
                         <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <div class="flex justify-between items-start mb-1"><span class="font-bold text-slate-700 dark:text-slate-200 text-sm">${p.team_no}: ${p.title}</span></div>
-                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">${p.members.map(m => `${m.name} <span class="opacity-70">(${m.roll})</span>`).join(', ')}</div>
-                            <div class="flex gap-3 text-xs">
-                                ${p.presentation_links.length ? `<a href="${p.presentation_links[0]}" target="_blank" class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200 font-medium"><i class="ph ph-presentation"></i> PPT</a>` : ''}
-                                ${p.documents.length ? `<a href="${p.documents[0]}" target="_blank" class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"><i class="ph ph-file-pdf"></i> Report</a>` : ''}
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="font-bold text-slate-700 dark:text-slate-200 text-sm">${p.team_no}: ${p.title}</span>
                             </div>
-                        </div>`).join('');
-                    details.innerHTML = `<summary class="cursor-pointer bg-slate-50/80 dark:bg-slate-800/80 px-4 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide sticky top-0 backdrop-blur-sm flex justify-between items-center select-none">${type}<i class="ph ph-caret-down text-slate-400 transition-transform group-open:rotate-180"></i></summary><div class="divide-y divide-slate-100 dark:divide-slate-800">${itemsHtml}</div>`;
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                                ${p.members.map(m => `${m.name} <span class="opacity-70">(${m.roll})</span>`).join(', ')}
+                            </div>
+                            <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                                ${presentations}
+                                ${reports}
+                            </div>
+                        </div>`;
+                    }).join('');
+
+                    details.innerHTML = `
+                        <summary class="cursor-pointer bg-slate-50/80 dark:bg-slate-800/80 px-4 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide sticky top-0 backdrop-blur-sm flex justify-between items-center select-none">
+                            ${type}
+                            <i class="ph ph-caret-down text-slate-400 transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800">${itemsHtml}</div>`;
                     container.appendChild(details);
                 }
             },
-
             populateSelect: function (id, items) {
                 const sel = document.getElementById(id);
                 const placeholder = sel.firstElementChild;

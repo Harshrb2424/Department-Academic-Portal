@@ -8,8 +8,8 @@
       { "name": "John Doe", "roll": "20X1A0501" },
       { "name": "Jane Smith", "roll": "20X1A0502" }
     ],
-    "presentation_links": ["https://slides.com/team12/final"],
-    "documents": ["https://drive.google.com/team12/report.pdf"]
+    "presentation_links": ["https://slides.com/team12/final", "https://slides.com/team12/final"],
+    "documents": ["https://drive.google.com/team12/report.pdf", "https://drive.google.com/team12/report.pdf", "https://drive.google.com/team12/report.pdf"]
   },
   {
     "project_id": "PRJ_002",
@@ -19,7 +19,7 @@
     "members": [
       { "name": "Alice Brown", "roll": "20X1A0544" }
     ],
-    "presentation_links": ["https://slides.com/team04/mini"],
+    "presentation_links": ["https://slides.com/team04/mini", "https://slides.com/team04/mini", "https://slides.com/team04/mini"],
     "documents": ["https://github.com/team04/code"]
   }
 ]
