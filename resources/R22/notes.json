@@ -1,0 +1,36 @@
+[
+    {
+        "subject_code": "AP",
+        "resource_type": "Lecture Notes",
+        "links": [
+            {
+                "name": "Unit 1",
+                "link": "https://example.com/dsa-notes.pdf"
+            },
+            {
+                "name": "Unit 2",
+                "link": "https://example.com/dsa-notes.pdf"
+            }
+        ],
+        "author_type": "Faculty",
+        "author_name": "Dr. A. Sharma",
+        "author_link": "https://university.edu/staff/sharma"
+    },
+    {
+        "subject_code": "AP",
+        "resource_type": "Lecture Notes",
+        "links": [
+            {
+                "name": "Unit 1",
+                "link": "https://example.com/dsa-notes.pdf"
+            },
+            {
+                "name": "Unit 2",
+                "link": "https://example.com/dsa-notes.pdf"
+            }
+        ],
+        "author_type": "Faculty",
+        "author_name": "Dr. A. Amara",
+        "author_link": "https://university.edu/staff/amara"
+    }
+]

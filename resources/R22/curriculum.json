@@ -1,0 +1,16 @@
+[
+  {
+    "department": "CSM",
+    "batch": "2022-2026",
+    "year": 1,
+    "semester": 1,
+    "subjects": ["AP", "M1"]
+  },
+  {
+    "department": "CSM",
+    "batch": "2022-2026",
+    "year": 2,
+    "semester": 3,
+    "subjects": ["DSA"]
+  }
+]
